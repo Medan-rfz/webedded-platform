@@ -1,0 +1,79 @@
+definitions:
+  authdto.RegisterDTO:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      password:
+        type: string
+    type: object
+  authhandler.loginBodyReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  authhandler.loginBodyResp:
+    properties:
+      token:
+        type: string
+    type: object
+info:
+  contact:
+    name: API Support
+  license:
+    name: MIT
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login to account
+      parameters:
+      - description: user data
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/authhandler.loginBodyReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authhandler.loginBodyResp'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      tags:
+      - accounts
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register of account
+      parameters:
+      - description: user data
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/authdto.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      tags:
+      - accounts
+swagger: "2.0"

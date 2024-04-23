@@ -1,0 +1,111 @@
+definitions:
+  auth_dto.LoginDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  auth_dto.RefreshDTO:
+    properties:
+      refreshToken:
+        type: string
+    type: object
+  auth_dto.RegisterDTO:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      password:
+        type: string
+    type: object
+  auth_http.loginBodyResp:
+    properties:
+      refreshToken:
+        type: string
+      token:
+        type: string
+    type: object
+info:
+  contact:
+    name: API Support
+  license:
+    name: MIT
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login to account
+      parameters:
+      - description: user data
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/auth_dto.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth_http.loginBodyResp'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      tags:
+      - accounts
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh jwt token
+      parameters:
+      - description: user data
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/auth_dto.RefreshDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth_http.loginBodyResp'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      tags:
+      - accounts
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register of account
+      parameters:
+      - description: user data
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/auth_dto.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      tags:
+      - accounts
+swagger: "2.0"

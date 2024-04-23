@@ -1,28 +1,28 @@
 version: "3.1"
 services:
 
-  authorization:
-    image: authorization
-    build: ./authorization/
+  users_management:
+    image: users_management
+    build: ./users_management/
     ports:
       - "8081:8081"
-      - "8082:8082"
     environment:
-      - AUTH_DB_CONN_STR=postgresql://admin:255+1@authorization-db:5432/auth_users
+      - AUTH_DB_CONN_STR=postgresql://admin:255+1@users-management-db:5432/users_management
     depends_on:
-      - authorization-db
+      users-management-db:
+        condition: service_started
     networks:
       - users_network
 
-  authorization-db:
+  users-management-db:
     image: docker.io/bitnami/postgresql:15
     volumes:
-      - 'postgresql_auth_data:/bitnami/postgresql'
+      - 'postgresql_users_data:/bitnami/postgresql'
     environment:
       POSTGRESQL_PGAUDIT_LOG: READ,WRITE
       POSTGRESQL_USERNAME: "admin"
       POSTGRESQL_PASSWORD: "255+1"
-      POSTGRESQL_DATABASE: "auth_users"
+      POSTGRESQL_DATABASE: "users_management"
     ports:
       - "8083:5432"
     networks:
@@ -32,5 +32,5 @@ networks:
   users_network:
 
 volumes:
-  postgresql_auth_data:
+  postgresql_users_data:
     driver: local

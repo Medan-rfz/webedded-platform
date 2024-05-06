@@ -23,8 +23,6 @@ services:
       POSTGRESQL_USERNAME: "admin"
       POSTGRESQL_PASSWORD: "255+1"
       POSTGRESQL_DATABASE: "users_management"
-    ports:
-      - "8083:5432"
     networks:
       - users_network
 

@@ -12,7 +12,7 @@ func (r *authRepository) GetRefreshToken(
 	token string,
 	opts ...repositories.RepoOption,
 ) (*auth_entities.UserRefreshToken, error) {
-	q := r.getQuery(opts...)
+	q := r.getQuery(ctx, opts...)
 	rTokenInfo, err := q.GetRefreshToken(ctx, token)
 	if err != nil {
 		return nil, err

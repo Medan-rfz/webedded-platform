@@ -8,8 +8,8 @@ type Repo struct {
 
 type RepoOption func(*Repo)
 
-func WithTx(tx pgx.Tx) RepoOption {
-	return func(r *Repo) {
-		r.Tx = tx
-	}
-}
+// func WithTx(tx pgx.Tx) RepoOption {
+// 	return func(r *Repo) {
+// 		r.Tx = tx
+// 	}
+// }

@@ -9,6 +9,7 @@ import (
 	auth_server "users_management/internal/app/servers/http"
 	auth_handler "users_management/internal/handlers/auth"
 	auth_repo "users_management/internal/infrastructure/repositories/auth"
+	txexecutor "users_management/internal/infrastructure/tx_executor"
 	auth_service "users_management/internal/services/auth"
 	users_service "users_management/internal/services/users"
 
@@ -34,9 +35,14 @@ func main() {
 		IsDev:   true,
 	}
 
+	txExecutor, err := txexecutor.NewTxExecutor(conn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	authRepository := auth_repo.NewAuthRepository(conn)
-	authService := auth_service.NewUsersService(authRepository)
-	usersService := users_service.NewUsersService()
+	authService := auth_service.NewUsersService(txExecutor, authRepository)
+	usersService := users_service.NewUsersService(txExecutor)
 	authHandler := auth_handler.NewAuthHandler(authService, usersService)
 	authHttpHandler := auth_http.NewAuthHttpHandler(authHandler)
 	authServer := auth_server.NewAuthHttpServer(authHttpHandler)

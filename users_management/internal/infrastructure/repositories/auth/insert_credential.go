@@ -13,7 +13,7 @@ func (r *authRepository) InsertCredential(
 	user auth_entities.UserCredential,
 	opts ...repositories.RepoOption,
 ) error {
-	q := r.getQuery(opts...)
+	q := r.getQuery(ctx, opts...)
 	return q.InsertCredentials(ctx, users.InsertCredentialsParams{
 		UserID:       user.UserId,
 		PasswordHash: user.PasswordHash,

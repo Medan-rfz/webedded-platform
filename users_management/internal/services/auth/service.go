@@ -21,6 +21,10 @@ var (
 	jwtRefreshKey = []byte("secret-refresh-key")
 )
 
+type txExecutor interface {
+	TxBegin(ctx context.Context, exec func(ctx context.Context) error) error
+}
+
 type authRepo interface {
 	CreateUser(ctx context.Context, user auth_entities.User, opts ...repositories.RepoOption) (int64, error)
 	GetByEmail(ctx context.Context, email string, opts ...repositories.RepoOption) (*auth_entities.AuthUserModel, error)
@@ -32,11 +36,13 @@ type authRepo interface {
 }
 
 type authService struct {
-	authRepo authRepo
+	authRepo   authRepo
+	txExecutor txExecutor
 }
 
-func NewUsersService(authRepo authRepo) *authService {
+func NewUsersService(txExecutor txExecutor, authRepo authRepo) *authService {
 	return &authService{
-		authRepo: authRepo,
+		authRepo:   authRepo,
+		txExecutor: txExecutor,
 	}
 }

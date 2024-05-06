@@ -7,7 +7,6 @@ import (
 	auth_entities "users_management/internal/domain/entities/auth"
 	"users_management/internal/domain/entities/errors"
 	passwordhash "users_management/internal/helpers/password_hash"
-	"users_management/internal/infrastructure/repositories"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -29,31 +28,23 @@ func (s *authService) Register(ctx context.Context, data auth_dto.RegisterDTO) e
 		return err
 	}
 
-	tx, err := s.authRepo.NewTx(ctx)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		tx.Rollback(ctx)
-	}()
+	err = s.txExecutor.TxBegin(ctx, func(ctx context.Context) error {
+		userId, err := s.authRepo.CreateUser(ctx,
+			auth_entities.User{
+				FirstName: data.FirstName,
+				LastName:  data.LastName,
+				Email:     data.Email,
+			})
+		if err != nil {
+			return err
+		}
 
-	userId, err := s.authRepo.CreateUser(ctx,
-		auth_entities.User{
-			FirstName: data.FirstName,
-			LastName:  data.LastName,
-			Email:     data.Email,
-		},
-		repositories.WithTx(tx))
-	if err != nil {
-		return err
-	}
+		return s.authRepo.InsertCredential(ctx,
+			auth_entities.UserCredential{
+				UserId:       userId,
+				PasswordHash: passwordHash,
+			})
+	})
 
-	s.authRepo.InsertCredential(ctx,
-		auth_entities.UserCredential{
-			UserId:       userId,
-			PasswordHash: passwordHash,
-		},
-		repositories.WithTx(tx))
-
-	return tx.Commit(ctx)
+	return err
 }

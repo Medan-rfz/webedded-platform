@@ -13,7 +13,7 @@ func (r *authRepository) CreateUser(
 	user auth_entities.User,
 	opts ...repositories.RepoOption,
 ) (int64, error) {
-	q := r.getQuery(opts...)
+	q := r.getQuery(ctx, opts...)
 	return q.CreateUser(ctx, users.CreateUserParams{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,

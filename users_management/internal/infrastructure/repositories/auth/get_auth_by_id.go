@@ -12,7 +12,7 @@ func (r *authRepository) GetAuthById(
 	id int64,
 	opts ...repositories.RepoOption,
 ) (*auth_entities.AuthUserModel, error) {
-	q := r.getQuery(opts...)
+	q := r.getQuery(ctx, opts...)
 
 	row, err := q.GetAuthById(ctx, id)
 	if err != nil {

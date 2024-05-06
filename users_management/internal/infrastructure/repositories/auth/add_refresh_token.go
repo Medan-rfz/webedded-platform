@@ -15,7 +15,7 @@ func (r *authRepository) AddRefreshToken(
 	token auth_dto.AddRefreshDTO,
 	opts ...repositories.RepoOption,
 ) error {
-	q := r.getQuery(opts...)
+	q := r.getQuery(ctx, opts...)
 	return q.AddRefreshToken(ctx, auth.AddRefreshTokenParams{
 		UserID:       pgtype.Int8{Int64: token.UserId, Valid: true},
 		RefreshToken: token.RefreshToken,

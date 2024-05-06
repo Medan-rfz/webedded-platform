@@ -12,7 +12,7 @@ func (r *authRepository) GetAuthByEmail(
 	email string,
 	opts ...repositories.RepoOption,
 ) (*auth_entities.AuthUserModel, error) {
-	q := r.getQuery(opts...)
+	q := r.getQuery(ctx, opts...)
 
 	row, err := q.GetAuthByEmail(ctx, email)
 	if err != nil {

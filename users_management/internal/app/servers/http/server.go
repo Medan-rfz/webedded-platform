@@ -52,7 +52,7 @@ func (s *authHttpServer) Run(config AuthHttpServerConfig) error {
 		docs.SwaggerInfo.Title = "Swagger authorization service API"
 		docs.SwaggerInfo.Description = "Authorization service"
 		docs.SwaggerInfo.Version = "1.0"
-		docs.SwaggerInfo.Host = "0.0.0.0:8081"
+		// docs.SwaggerInfo.Host = "localhost:8081"
 		docs.SwaggerInfo.BasePath = ""
 		docs.SwaggerInfo.Schemes = []string{"http", "https"}
 

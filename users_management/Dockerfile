@@ -1,7 +1,7 @@
 FROM golang:1.22 as builder
 RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 COPY ./ ./
-RUN make build
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 make build
 
 
 FROM alpine

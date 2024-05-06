@@ -1,13 +1,18 @@
 FROM golang:1.22 as builder
 RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 COPY ./ ./
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 make build
+RUN make build
 
 
 FROM alpine
 COPY --from=builder /go/app /go/
 COPY --from=builder /go/bin/ /go/bin/
-RUN apk --no-cache add ca-certificates tzdata
+COPY --from=builder /go/migrations/ /go/migrations/
+COPY --from=builder /go/Makefile /go/Makefile
+
+ENV PATH="/go/bin:${PATH}"
+
+RUN apk --no-cache add make ca-certificates tzdata libc6-compat
 
 CMD ["/go/app"]
 EXPOSE 8081

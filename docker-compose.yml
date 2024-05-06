@@ -4,6 +4,7 @@ services:
   users_management:
     image: users_management
     build: ./users_management/
+    container_name: users_management
     ports:
       - "8081:8081"
     environment:
@@ -16,6 +17,7 @@ services:
 
   users-management-db:
     image: docker.io/bitnami/postgresql:15
+    container_name: users-management-db
     volumes:
       - 'postgresql_users_data:/bitnami/postgresql'
     environment:

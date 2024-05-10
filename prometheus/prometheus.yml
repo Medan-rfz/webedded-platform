@@ -1,0 +1,12 @@
+
+scrape_configs:
+  - job_name: 'prometheus - self-scrape'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'app - users-management'
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+        - "users-management:8201"

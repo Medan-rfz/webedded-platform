@@ -1,10 +1,16 @@
 version: "3.1"
 services:
+  # webbeded-platform-frontend:
+  #   container_name: webbeded-platform-frontend
+  #   build: ./frontend/
+  #   image: webbeded-platform-frontend
+  #   ports:
+  #     - "8085:80"
 
-  users_management:
-    image: users_management
+  users-management:
+    image: users-management
     build: ./users_management/
-    container_name: users_management
+    container_name: users-management
     ports:
       - "8081:8081"
     environment:
@@ -14,6 +20,7 @@ services:
         condition: service_started
     networks:
       - users_network
+      - metrics_network
 
   users-management-db:
     image: docker.io/bitnami/postgresql:15
@@ -28,9 +35,44 @@ services:
     networks:
       - users_network
 
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    networks:
+      - metrics_network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=255+1
+    volumes:
+      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/datasource.yaml:/etc/grafana/provisioning/datasources/main.yaml
+      - ./grafana/datasources:/var/lib/grafana/datasources
+    networks:
+      - metrics_network
+    ports:
+      - 3000:3000
+
 networks:
   users_network:
+  metrics_network:
 
 volumes:
   postgresql_users_data:
     driver: local
+  prometheus_data:

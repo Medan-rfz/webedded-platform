@@ -42,6 +42,7 @@ func NewAuthHttpServer(authHandler authHandler) *authHttpServer {
 
 func (s *authHttpServer) Run(config AuthHttpServerConfig) error {
 	r := chi.NewRouter()
+	r.Use(mw.MetricsMiddleware)
 	r.Use(mw.LoggerMiddleware)
 	r.Use(middleware.Timeout(time.Second * 20))
 	r.Post("/login", s.authHandler.Login)
@@ -52,9 +53,8 @@ func (s *authHttpServer) Run(config AuthHttpServerConfig) error {
 		docs.SwaggerInfo.Title = "Swagger authorization service API"
 		docs.SwaggerInfo.Description = "Authorization service"
 		docs.SwaggerInfo.Version = "1.0"
-		// docs.SwaggerInfo.Host = "localhost:8081"
 		docs.SwaggerInfo.BasePath = ""
-		docs.SwaggerInfo.Schemes = []string{"http", "https"}
+		docs.SwaggerInfo.Schemes = []string{"http"}
 
 		r.Get(
 			"/swagger/*",

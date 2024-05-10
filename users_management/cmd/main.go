@@ -6,6 +6,7 @@ import (
 	"os"
 
 	auth_http "users_management/internal/app/auth/http"
+	"users_management/internal/app/metrics"
 	auth_server "users_management/internal/app/servers/http"
 	auth_handler "users_management/internal/handlers/auth"
 	auth_repo "users_management/internal/infrastructure/repositories/auth"
@@ -14,6 +15,11 @@ import (
 	users_service "users_management/internal/services/users"
 
 	"github.com/jackc/pgx/v5"
+)
+
+const (
+	meterName = "github.com/Medan-rfz/webbeded-platform"
+	promPort  = 8201
 )
 
 func main() {
@@ -47,8 +53,16 @@ func main() {
 	authHttpHandler := auth_http.NewAuthHttpHandler(authHandler)
 	authServer := auth_server.NewAuthHttpServer(authHttpHandler)
 
+	go serveMetrics()
+
 	err = authServer.Run(httpConfig)
 	if err != nil {
 		log.Fatalln(err)
+	}
+}
+
+func serveMetrics() {
+	if err := metrics.Run(promPort); err != nil {
+		log.Fatalln("prometheus serve start error")
 	}
 }

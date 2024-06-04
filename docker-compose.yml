@@ -34,6 +34,32 @@ services:
       - users_network
 
   ################################################################
+  # Sessions service
+  ################################################################
+  sessions-service:
+    image: sessions-service
+    build: ./sessions-service/
+    container_name: sessions-service
+    environment:
+      - REDIS_CONN_STR=redis://sessions-service:255+1@sessions-service-redis:7000/0
+    ports:
+      - "8082:8082"
+    depends_on:
+      - sessions-service-redis
+    networks:
+      - sessions_network
+
+  sessions-service-redis:
+    image: bitnami/redis:latest
+    container_name: sessions-service-redis
+    environment:
+      - REDIS_PORT_NUMBER=7000
+    volumes:
+      - './volumes/sessions-service/redis-persistence:/bitnami/redis/data'
+    networks:
+      - sessions_network
+
+  ################################################################
   # Observability
   ################################################################
   prometheus:

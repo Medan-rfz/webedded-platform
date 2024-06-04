@@ -1,32 +1,30 @@
 version: "3.1"
 services:
-  # webbeded-platform-frontend:
-  #   container_name: webbeded-platform-frontend
-  #   build: ./frontend/
-  #   image: webbeded-platform-frontend
-  #   ports:
-  #     - "8085:80"
 
-  users-management:
-    image: users-management
-    build: ./users_management/
-    container_name: users-management
+  ################################################################
+  # Users service
+  ################################################################
+  users-service:
+    image: users-service
+    build: ./users-service/
+    container_name: users-service
     ports:
       - "8081:8081"
     environment:
-      - AUTH_DB_CONN_STR=postgresql://admin:255+1@users-management-db:5432/users_management
+      - AUTH_DB_CONN_STR=postgresql://admin:255+1@users-service-db:5432/users_management
     depends_on:
-      users-management-db:
-        condition: service_started
+      - users-service-db
     networks:
       - users_network
       - metrics_network
 
-  users-management-db:
-    image: docker.io/bitnami/postgresql:15
-    container_name: users-management-db
+  users-service-db:
+    image: bitnami/postgresql:15
+    container_name: users-service-db
     volumes:
-      - 'postgresql_users_data:/bitnami/postgresql'
+      - './volumes/users-service/postgres-data:/bitnami/postgresql'
+    ports:
+      - 5432:5432
     environment:
       POSTGRESQL_PGAUDIT_LOG: READ,WRITE
       POSTGRESQL_USERNAME: "admin"
@@ -35,6 +33,9 @@ services:
     networks:
       - users_network
 
+  ################################################################
+  # Observability
+  ################################################################
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
@@ -70,6 +71,7 @@ services:
 
 networks:
   users_network:
+  sessions_network:
   metrics_network:
 
 volumes:
